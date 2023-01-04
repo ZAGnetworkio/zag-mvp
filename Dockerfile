@@ -1,4 +1,4 @@
-FROM node:gallium-alpine
+FROM node:gallium
 
 WORKDIR /home/node/app
 
