@@ -56,7 +56,7 @@ const getProfileMeta = async (req: NextApiRequest, res: NextApiResponse, handle:
         ? `${OG_MEDIA_PROXY_URL}/tr:n-avatar,tr:di-placeholder.webp/${getIPFSLink(
             profile?.picture?.original?.url ?? profile?.picture?.uri ?? getStampFyiURL(profile?.ownedBy)
           )}`
-        : 'https://assets.lenster.xyz/images/og/logo.jpeg';
+        : 'https://i.ibb.co/0QqNrFf/zag.png';
 
       return res
         .setHeader('Content-Type', 'text/html')

@@ -37,7 +37,7 @@ export const XMTP_PREFIX = 'lens.dev/dm';
 export const APP_NAME = 'Zag Network';
 export const DESCRIPTION =
   'Zag Network is a composable, decentralized, and permissionless social media web app built with Lens Protocol 🌿';
-export const DEFAULT_OG = 'https://assets.lenster.xyz/images/og/logo.jpeg';
+export const DEFAULT_OG = 'https://i.ibb.co/0QqNrFf/zag.png';
 export const APP_VERSION = packageJson.version;
 
 // Git
