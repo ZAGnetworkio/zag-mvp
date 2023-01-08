@@ -48,7 +48,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
         <WagmiConfig client={wagmiClient}>
           <ApolloProvider client={client}>
             <QueryClientProvider client={queryClient}>
-              <ThemeProvider defaultTheme="light" attribute="class">
+              <ThemeProvider defaultTheme="dark" attribute="class">
                 <Layout>{children}</Layout>
               </ThemeProvider>
             </QueryClientProvider>
