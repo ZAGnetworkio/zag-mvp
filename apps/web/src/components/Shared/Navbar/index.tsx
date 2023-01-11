@@ -80,7 +80,7 @@ const Navbar: FC = () => {
                 </Disclosure.Button>
                 <Link href="/" className="hidden md:block">
                   <img
-                    className="w-8 h-8"
+                    className="w-64"
                     height={32}
                     width={32}
                     src={currentProfile && hasPrideLogo(currentProfile) ? '/pride.svg' : '/logo.svg'}
