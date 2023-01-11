@@ -1,21 +1,21 @@
 import useStaffMode from '@components/utils/hooks/useStaffMode';
-import { Menu } from '@headlessui/react';
-import { GlobeAltIcon } from '@heroicons/react/outline';
+// import { Menu } from '@headlessui/react';
+// import { GlobeAltIcon } from '@heroicons/react/outline';
 import { Analytics } from '@lib/analytics';
-import { setLocale, supportedLocales } from '@lib/i18n';
+// import { setLocale, supportedLocales } from '@lib/i18n';
 import { Trans } from '@lingui/macro';
-import { useLingui } from '@lingui/react';
-import clsx from 'clsx';
+// import { useLingui } from '@lingui/react';
+// import clsx from 'clsx';
 import { APP_NAME } from 'data/constants';
-import Link from 'next/link';
+// import Link from 'next/link';
 import type { FC } from 'react';
 import { FOOTER } from 'src/tracking';
 
-import MenuTransition from './MenuTransition';
+// import MenuTransition from './MenuTransition';
 
 const Footer: FC = () => {
   const { allowed: staffMode } = useStaffMode();
-  const { i18n } = useLingui();
+  // const { i18n } = useLingui();
 
   return (
     <footer className={`sticky leading-7 text-sm ${staffMode ? 'top-28' : 'top-20'}`} data-test="footer">
@@ -23,21 +23,21 @@ const Footer: FC = () => {
         <span className="font-bold lt-text-gray-500">
           &copy; {new Date().getFullYear()} {APP_NAME}
         </span>
-        <Link href="/privacy">
+        {/* <Link href="/privacy">
           <Trans>Terms</Trans>
         </Link>
         <Link href="/privacy">
           <Trans>Privacy</Trans>
-        </Link>
+        </Link> */}
         <a
-          href="https://lenster.xyz/discord"
+          href="https://discord.gg/5mACuu4fXU"
           target="_blank"
           rel="noreferrer noopener"
           onClick={() => Analytics.track(FOOTER.DISCORD)}
         >
           <Trans>Discord</Trans>
         </a>
-        <a
+        {/* <a
           href="https://lenster.xyz/donate"
           target="_blank"
           rel="noreferrer noopener"
@@ -115,7 +115,7 @@ const Footer: FC = () => {
           onClick={() => Analytics.track(FOOTER.VERCEL)}
         >
           <Trans>▲ Powered by Vercel</Trans>
-        </a>
+        </a> */}
       </div>
     </footer>
   );
