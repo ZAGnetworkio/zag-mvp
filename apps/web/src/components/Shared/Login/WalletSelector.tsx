@@ -2,6 +2,7 @@ import SwitchNetwork from '@components/Shared/SwitchNetwork';
 import { Button } from '@components/UI/Button';
 import { Spinner } from '@components/UI/Spinner';
 import useIsMounted from '@components/utils/hooks/useIsMounted';
+import { KeyIcon } from '@heroicons/react/outline';
 import { XCircleIcon } from '@heroicons/react/solid';
 import { Analytics } from '@lib/analytics';
 import getWalletLogo from '@lib/getWalletLogo';
@@ -19,7 +20,7 @@ import { useAppPersistStore, useAppStore } from 'src/store/app';
 import { useAuthStore } from 'src/store/auth';
 import { USER } from 'src/tracking';
 import type { Connector } from 'wagmi';
-import { useAccount, useConnect, useNetwork, useSignMessage } from 'wagmi';
+import { useAccount, useConnect, useDisconnect, useNetwork, useSignMessage } from 'wagmi';
 
 interface Props {
   setHasConnected: Dispatch<boolean>;
@@ -35,7 +36,8 @@ const WalletSelector: FC<Props> = ({ setHasConnected, setHasProfile }) => {
 
   const { mounted } = useIsMounted();
   const { chain } = useNetwork();
-  const { connectors, error, connectAsync } = useConnect();
+  const { connectors, error, connectAsync } = useConnect({ chainId: CHAIN_ID });
+  const { disconnect } = useDisconnect();
   const { address, connector: activeConnector } = useAccount();
   const { signMessageAsync } = useSignMessage({ onError });
   const [loadChallenge, { error: errorChallenge }] = useChallengeLazyQuery({
@@ -112,32 +114,46 @@ const WalletSelector: FC<Props> = ({ setHasConnected, setHasProfile }) => {
 
   return activeConnector?.id ? (
     <div className="space-y-3">
-      {chain?.id === CHAIN_ID ? (
-        <Button
-          disabled={loading}
-          icon={
-            loading ? (
-              <Spinner className="mr-0.5" size="xs" />
-            ) : (
-              <img className="mr-0.5 w-4 h-4" height={16} width={16} src="/lens.png" alt="Lens Logo" />
-            )
-          }
-          onClick={handleSign}
+      <div className="space-y-2.5">
+        {chain?.id === CHAIN_ID ? (
+          <Button
+            disabled={loading}
+            icon={
+              loading ? (
+                <Spinner className="mr-0.5" size="xs" />
+              ) : (
+                <img className="mr-0.5 h-4 w-4" height={16} width={16} src="/lens.png" alt="Lens Logo" />
+              )
+            }
+            onClick={handleSign}
+          >
+            <Trans>Sign-In with Lens</Trans>
+          </Button>
+        ) : (
+          <SwitchNetwork />
+        )}
+        <button
+          onClick={() => {
+            disconnect?.();
+            Analytics.track(USER.CHANGE_WALLET);
+          }}
+          className="flex items-center space-x-1 text-sm underline"
         >
-          <Trans>Sign-In with Lens</Trans>
-        </Button>
-      ) : (
-        <SwitchNetwork />
-      )}
+          <KeyIcon className="h-4 w-4" />
+          <div>
+            <Trans>Change wallet</Trans>
+          </div>
+        </button>
+      </div>
       {(errorChallenge || errorAuthenticate || errorProfiles) && (
         <div className="flex items-center space-x-1 font-bold text-red-500">
-          <XCircleIcon className="w-5 h-5" />
+          <XCircleIcon className="h-5 w-5" />
           <div>{ERROR_MESSAGE}</div>
         </div>
       )}
     </div>
   ) : (
-    <div className="inline-block overflow-hidden space-y-3 w-full text-left align-middle transition-all transform">
+    <div className="inline-block w-full transform space-y-3 overflow-hidden text-left align-middle transition-all">
       {connectors.map((connector) => {
         return (
           <button
@@ -145,7 +161,7 @@ const WalletSelector: FC<Props> = ({ setHasConnected, setHasProfile }) => {
             key={connector.id}
             className={clsx(
               { 'hover:bg-gray-100 dark:hover:bg-gray-700': connector.id !== activeConnector?.id },
-              'w-full flex items-center justify-between space-x-2.5 px-4 py-3 overflow-hidden rounded-xl border dark:border-gray-700 outline-none'
+              'flex w-full items-center justify-between space-x-2.5 overflow-hidden rounded-xl border px-4 py-3 outline-none dark:border-gray-700'
             )}
             onClick={() => onConnect(connector)}
             disabled={mounted ? !connector.ready || connector.id === activeConnector?.id : false}
@@ -157,7 +173,7 @@ const WalletSelector: FC<Props> = ({ setHasConnected, setHasProfile }) => {
             <img
               src={getWalletLogo(connector.name)}
               draggable={false}
-              className="w-6 h-6"
+              className="h-6 w-6"
               height={24}
               width={24}
               alt={connector.id}
@@ -167,7 +183,7 @@ const WalletSelector: FC<Props> = ({ setHasConnected, setHasProfile }) => {
       })}
       {error?.message ? (
         <div className="flex items-center space-x-1 text-red-500">
-          <XCircleIcon className="w-5 h-5" />
+          <XCircleIcon className="h-5 w-5" />
           <div>{error?.message ?? t`Failed to connect`}</div>
         </div>
       ) : null}

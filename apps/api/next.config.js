@@ -1,11 +1,13 @@
 /** @type {import('next').NextConfig} */
-const withTM = require('next-transpile-modules')(['data']);
-
-module.exports = withTM({
+module.exports = {
   reactStrictMode: false,
   trailingSlash: false,
+  transpilePackages: ['data'],
   async rewrites() {
-    return [{ source: '/:path*', destination: '/api/:path*' }];
+    return [
+      { source: '/prerender/:path*', destination: '/prerender/:path*' },
+      { source: '/:path*', destination: '/api/:path*' }
+    ];
   },
   async headers() {
     return [
@@ -19,4 +21,4 @@ module.exports = withTM({
       }
     ];
   }
-});
+};

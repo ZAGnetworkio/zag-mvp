@@ -1,7 +1,6 @@
 import HelpTooltip from '@components/UI/HelpTooltip';
 import { Modal } from '@components/UI/Modal';
 import { Tooltip } from '@components/UI/Tooltip';
-import useStaffMode from '@components/utils/hooks/useStaffMode';
 import { LockClosedIcon } from '@heroicons/react/outline';
 import { Analytics } from '@lib/analytics';
 import { t, Trans } from '@lingui/macro';
@@ -19,11 +18,6 @@ const AccessSettings: FC = () => {
   const hasConditions = useAccessSettingsStore((state) => state.hasConditions);
   const reset = useAccessSettingsStore((state) => state.reset);
   const [showModal, setShowModal] = useState(false);
-  const { allowed: staffMode } = useStaffMode();
-
-  if (!staffMode) {
-    return null;
-  }
 
   return (
     <>
@@ -51,7 +45,7 @@ const AccessSettings: FC = () => {
             />
           </div>
         }
-        icon={<LockClosedIcon className="w-5 h-5 text-brand" />}
+        icon={<LockClosedIcon className="text-brand h-5 w-5" />}
         show={showModal}
         onClose={() => {
           setShowModal(false);

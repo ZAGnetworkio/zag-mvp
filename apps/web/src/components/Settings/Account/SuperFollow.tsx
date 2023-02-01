@@ -1,4 +1,3 @@
-import IndexStatus from '@components/Shared/IndexStatus';
 import { Button } from '@components/UI/Button';
 import { Card } from '@components/UI/Card';
 import { Form, useZodForm } from '@components/UI/Form';
@@ -50,11 +49,7 @@ const SuperFollow: FC = () => {
     Analytics.track(SETTINGS.ACCOUNT.SET_SUPER_FOLLOW);
   };
 
-  const {
-    data: writeData,
-    isLoading: writeLoading,
-    write
-  } = useContractWrite({
+  const { isLoading: writeLoading, write } = useContractWrite({
     address: LENSHUB_PROXY,
     abi: LensHubProxy,
     functionName: 'setFollowModuleWithSig',
@@ -70,7 +65,7 @@ const SuperFollow: FC = () => {
     }
   });
 
-  const [broadcast, { data: broadcastData, loading: broadcastLoading }] = useBroadcastMutation({
+  const [broadcast, { loading: broadcastLoading }] = useBroadcastMutation({
     onCompleted
   });
   const [createSetFollowModuleTypedData, { loading: typedDataLoading }] =
@@ -129,7 +124,7 @@ const SuperFollow: FC = () => {
   if (loading) {
     return (
       <Card>
-        <div className="p-5 py-10 space-y-2 text-center">
+        <div className="space-y-2 p-5 py-10 text-center">
           <Spinner size="md" className="mx-auto" />
           <div>
             <Trans>Loading super follow settings</Trans>
@@ -140,14 +135,12 @@ const SuperFollow: FC = () => {
   }
 
   const followType = currencyData?.profile?.followModule?.__typename;
-  const broadcastTxHash =
-    broadcastData?.broadcast.__typename === 'RelayerResult' && broadcastData.broadcast.txHash;
 
   return (
     <Card>
       <Form
         form={form}
-        className="p-5 space-y-4"
+        className="space-y-4 p-5"
         onSubmit={({ amount, recipient }) => {
           setSuperFollow(amount, recipient);
         }}
@@ -166,7 +159,7 @@ const SuperFollow: FC = () => {
             <Trans>Select Currency</Trans>
           </div>
           <select
-            className="w-full bg-white rounded-xl border border-gray-300 outline-none dark:bg-gray-800 disabled:bg-gray-500 disabled:bg-opacity-20 disabled:opacity-60 dark:border-gray-700 focus:border-brand-500 focus:ring-brand-400"
+            className="focus:border-brand-500 focus:ring-brand-400 w-full rounded-xl border border-gray-300 bg-white outline-none disabled:bg-gray-500 disabled:bg-opacity-20 disabled:opacity-60 dark:border-gray-700 dark:bg-gray-800"
             onChange={(e) => {
               const currency = e.target.value.split('-');
               setSelectedCurrency(currency[0]);
@@ -188,7 +181,7 @@ const SuperFollow: FC = () => {
           max="100000"
           prefix={
             <img
-              className="w-6 h-6"
+              className="h-6 w-6"
               height={24}
               width={24}
               src={getTokenImage(selectedCurrencySymbol)}
@@ -204,7 +197,7 @@ const SuperFollow: FC = () => {
           placeholder="0x3A5bd...5e3"
           {...form.register('recipient')}
         />
-        <div className="ml-auto flex flex-col space-y-2">
+        <div className="ml-auto">
           <div className="block space-y-2 space-x-0 sm:flex sm:space-y-0 sm:space-x-2">
             {followType === 'FeeFollowModuleSettings' && (
               <Button
@@ -213,7 +206,7 @@ const SuperFollow: FC = () => {
                 outline
                 onClick={() => setSuperFollow(null, null)}
                 disabled={typedDataLoading || signLoading || writeLoading || broadcastLoading}
-                icon={<XIcon className="w-4 h-4" />}
+                icon={<XIcon className="h-4 w-4" />}
               >
                 <Trans>Disable Super follow</Trans>
               </Button>
@@ -221,14 +214,11 @@ const SuperFollow: FC = () => {
             <Button
               type="submit"
               disabled={typedDataLoading || signLoading || writeLoading || broadcastLoading}
-              icon={<StarIcon className="w-4 h-4" />}
+              icon={<StarIcon className="h-4 w-4" />}
             >
               {followType === 'FeeFollowModuleSettings' ? t`Update Super follow` : t`Set Super follow`}
             </Button>
           </div>
-          {writeData?.hash ?? broadcastTxHash ? (
-            <IndexStatus txHash={writeData?.hash ?? broadcastTxHash} />
-          ) : null}
         </div>
       </Form>
     </Card>

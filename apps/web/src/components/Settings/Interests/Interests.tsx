@@ -63,20 +63,20 @@ const Interests: FC = () => {
     <div className="space-y-4">
       {sanitizeProfileInterests(interestsData)?.map(({ category, subCategories }) => (
         <div className="space-y-2" key={category.id}>
-          <h2 className="capitalize font-medium text-sm">{category.label}</h2>
+          <h2 className="text-sm font-medium capitalize">{category.label}</h2>
           <div className="flex flex-wrap items-center gap-3">
             {subCategories?.map((subCategory) => (
               <Button
                 key={subCategory.id}
                 variant={selectedTopics.includes(subCategory.id) ? 'primary' : 'secondary'}
                 size="sm"
-                className="text-sm font-medium capitalize"
+                className="font-medium capitalize"
                 disabled={
                   !selectedTopics.includes(subCategory.id) && selectedTopics.length === MAX_TOPICS_ALLOWED
                 }
                 icon={
                   selectedTopics.includes(subCategory.id) ? (
-                    <CheckCircleIcon className="h-4 w-4 text-brand" />
+                    <CheckCircleIcon className="text-brand h-4 w-4" />
                   ) : (
                     <PlusCircleIcon className="h-4 w-4" />
                   )
@@ -92,13 +92,13 @@ const Interests: FC = () => {
                 key={category.id}
                 variant={selectedTopics.includes(category.id) ? 'primary' : 'secondary'}
                 size="sm"
-                className="text-sm font-medium capitalize"
+                className="font-medium capitalize"
                 disabled={
                   !selectedTopics.includes(category.id) && selectedTopics.length === MAX_TOPICS_ALLOWED
                 }
                 icon={
                   selectedTopics.includes(category.id) ? (
-                    <CheckCircleIcon className="h-4 w-4 text-brand" />
+                    <CheckCircleIcon className="text-brand h-4 w-4" />
                   ) : (
                     <PlusCircleIcon className="h-4 w-4" />
                   )

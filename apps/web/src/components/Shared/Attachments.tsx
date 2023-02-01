@@ -1,6 +1,6 @@
 import { Button } from '@components/UI/Button';
 import { LightBox } from '@components/UI/LightBox';
-import type { LensterPublication, NewLensterAttachment } from '@generated/types';
+import type { NewLensterAttachment } from '@generated/types';
 import { ExternalLinkIcon, XIcon } from '@heroicons/react/outline';
 import { Analytics } from '@lib/analytics';
 import getIPFSLink from '@lib/getIPFSLink';
@@ -8,7 +8,7 @@ import imageProxy from '@lib/imageProxy';
 import { Trans } from '@lingui/macro';
 import clsx from 'clsx';
 import { ALLOWED_AUDIO_TYPES, ALLOWED_VIDEO_TYPES, ATTACHMENT } from 'data/constants';
-import type { MediaSet } from 'lens';
+import type { MediaSet, Publication } from 'lens';
 import type { FC } from 'react';
 import { useState } from 'react';
 import { usePublicationStore } from 'src/store/publication';
@@ -40,7 +40,7 @@ interface Props {
   attachments: any;
   isNew?: boolean;
   hideDelete?: boolean;
-  publication?: LensterPublication;
+  publication?: Publication;
   txn?: any;
 }
 
@@ -80,7 +80,7 @@ const Attachments: FC<Props> = ({
           const type = isNew ? attachment.type : attachment.original?.mimeType;
           const url = isNew
             ? attachment.previewItem || getIPFSLink(attachment.item!)
-            : getIPFSLink(attachment.original?.url);
+            : getIPFSLink(attachment.original?.url) || getIPFSLink(attachment.item!);
 
           return (
             <div
@@ -117,13 +117,22 @@ const Attachments: FC<Props> = ({
               ) : ALLOWED_VIDEO_TYPES.includes(type) ? (
                 <Video src={url} poster={getCoverUrl()} />
               ) : ALLOWED_AUDIO_TYPES.includes(type) ? (
-                <Audio src={url} isNew={isNew} publication={publication} txn={txn} />
+                <Audio
+                  src={url}
+                  isNew={isNew}
+                  publication={publication}
+                  txn={txn}
+                  expandCover={(url) => setExpandedImage(url)}
+                />
               ) : (
                 <img
-                  className="object-cover bg-gray-100 rounded-lg border cursor-pointer dark:bg-gray-800 dark:border-gray-700"
+                  className="cursor-pointer rounded-lg border bg-gray-100 object-cover dark:border-gray-700 dark:bg-gray-800"
                   loading="lazy"
                   height={1000}
                   width={1000}
+                  onError={({ currentTarget }) => {
+                    currentTarget.src = url;
+                  }}
                   onClick={() => {
                     setExpandedImage(url);
                     Analytics.track(PUBLICATION.ATTACHEMENT.IMAGE.OPEN);
@@ -138,10 +147,10 @@ const Attachments: FC<Props> = ({
                 >
                   <button
                     type="button"
-                    className="p-1.5 bg-gray-900 rounded-full opacity-75"
+                    className="rounded-full bg-gray-900 p-1.5 opacity-75"
                     onClick={() => removeAttachment(attachment)}
                   >
-                    <XIcon className="w-4 h-4 text-white" />
+                    <XIcon className="h-4 w-4 text-white" />
                   </button>
                 </div>
               )}

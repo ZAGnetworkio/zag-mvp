@@ -4,10 +4,10 @@ import { Card } from '@components/UI/Card';
 import { EmptyState } from '@components/UI/EmptyState';
 import { ErrorMessage } from '@components/UI/ErrorMessage';
 import InfiniteLoader from '@components/UI/InfiniteLoader';
-import type { LensterPublication } from '@generated/types';
 import { CollectionIcon } from '@heroicons/react/outline';
 import { t } from '@lingui/macro';
 import { SCROLL_THRESHOLD } from 'data/constants';
+import type { ExplorePublicationRequest, Publication } from 'lens';
 import { PublicationSortCriteria, PublicationTypes, useExploreFeedQuery } from 'lens';
 import type { FC } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -17,7 +17,7 @@ const Feed: FC = () => {
   const currentProfile = useAppStore((state) => state.currentProfile);
 
   // Variables
-  const request = {
+  const request: ExplorePublicationRequest = {
     sortCriteria: PublicationSortCriteria.Latest,
     publicationTypes: [PublicationTypes.Post, PublicationTypes.Comment],
     noRandomize: true,
@@ -45,7 +45,7 @@ const Feed: FC = () => {
   }
 
   if (publications?.length === 0) {
-    return <EmptyState message={t`No posts yet!`} icon={<CollectionIcon className="w-8 h-8 text-brand" />} />;
+    return <EmptyState message={t`No posts yet!`} icon={<CollectionIcon className="text-brand h-8 w-8" />} />;
   }
 
   if (error) {
@@ -64,7 +64,7 @@ const Feed: FC = () => {
         {publications?.map((publication, index) => (
           <SinglePublication
             key={`${publication.id}_${index}`}
-            publication={publication as LensterPublication}
+            publication={publication as Publication}
             showThread={false}
             showActions={false}
             showModActions

@@ -1,7 +1,10 @@
 import MetaTags from '@components/Common/MetaTags';
+import NFTFeed from '@components/NFT/NFTFeed';
 import { GridItemEight, GridItemFour, GridLayout } from '@components/UI/GridLayout';
 import formatHandle from '@lib/formatHandle';
+import isFeatureEnabled from '@lib/isFeatureEnabled';
 import { APP_NAME, STATIC_IMAGES_URL } from 'data/constants';
+import type { Profile } from 'lens';
 import { useProfileQuery } from 'lens';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
@@ -12,9 +15,9 @@ import { useAppStore } from 'src/store/app';
 
 import Cover from './Cover';
 import Details from './Details';
-import Feed from './Feed';
+import Feed, { ProfileFeedType } from './Feed';
 import FeedType from './FeedType';
-import NFTFeed from './NFTFeed';
+import NftGallery from './NftGallery';
 import ProfilePageShimmer from './Shimmer';
 
 const ViewProfile: NextPage = () => {
@@ -23,9 +26,9 @@ const ViewProfile: NextPage = () => {
   } = useRouter();
   const currentProfile = useAppStore((state) => state.currentProfile);
   const [feedType, setFeedType] = useState(
-    type && ['feed', 'replies', 'media', 'nft'].includes(type as string)
+    type && ['feed', 'replies', 'media', 'collects', 'nft'].includes(type as string)
       ? type.toString().toUpperCase()
-      : 'FEED'
+      : ProfileFeedType.Feed
   );
 
   const handle = formatHandle(username as string, true);
@@ -68,10 +71,17 @@ const ViewProfile: NextPage = () => {
         </GridItemFour>
         <GridItemEight className="space-y-5">
           <FeedType setFeedType={setFeedType} feedType={feedType} />
-          {(feedType === 'FEED' || feedType === 'REPLIES' || feedType === 'MEDIA') && (
-            <Feed profile={profile as any} type={feedType} />
-          )}
-          {feedType === 'NFT' && <NFTFeed profile={profile as any} />}
+          {(feedType === ProfileFeedType.Feed ||
+            feedType === ProfileFeedType.Replies ||
+            feedType === ProfileFeedType.Media ||
+            feedType === ProfileFeedType.Collects) && <Feed profile={profile as Profile} type={feedType} />}
+          {feedType === ProfileFeedType.Nft ? (
+            isFeatureEnabled('nft-gallery', currentProfile?.id) ? (
+              <NftGallery profile={profile as Profile} />
+            ) : (
+              <NFTFeed profile={profile as Profile} />
+            )
+          ) : null}
         </GridItemEight>
       </GridLayout>
     </>

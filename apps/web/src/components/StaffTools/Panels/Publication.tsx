@@ -1,17 +1,19 @@
 import { Card } from '@components/UI/Card';
-import type { LensterPublication } from '@generated/types';
 import { CollectionIcon, GlobeAltIcon, HashtagIcon, LinkIcon } from '@heroicons/react/outline';
 import { ShieldCheckIcon } from '@heroicons/react/solid';
 import getIPFSLink from '@lib/getIPFSLink';
+import type { Publication } from 'lens';
 import type { FC } from 'react';
 
 import MetaDetails from './MetaDetails';
 
 interface Props {
-  publication: LensterPublication;
+  publication: Publication;
 }
 
 const PublicationStaffTool: FC<Props> = ({ publication }) => {
+  const isComment = publication.__typename === 'Comment';
+
   return (
     <Card as="aside" className="mt-5 border-yellow-400 !bg-yellow-300 !bg-opacity-20 p-5">
       <div className="flex items-center space-x-2 text-yellow-600">
@@ -20,15 +22,15 @@ const PublicationStaffTool: FC<Props> = ({ publication }) => {
       </div>
       <div className="mt-3 space-y-1.5">
         <MetaDetails
-          icon={<HashtagIcon className="w-4 h-4 lt-text-gray-500" />}
+          icon={<HashtagIcon className="lt-text-gray-500 h-4 w-4" />}
           value={publication?.id}
           title="Publication ID"
         >
           {publication?.id}
         </MetaDetails>
-        {publication?.commentOn?.id ? (
+        {isComment ? (
           <MetaDetails
-            icon={<HashtagIcon className="w-4 h-4 lt-text-gray-500" />}
+            icon={<HashtagIcon className="lt-text-gray-500 h-4 w-4" />}
             value={publication?.commentOn?.id}
             title="Parent ID"
           >
@@ -36,21 +38,21 @@ const PublicationStaffTool: FC<Props> = ({ publication }) => {
           </MetaDetails>
         ) : null}
         <MetaDetails
-          icon={<CollectionIcon className="w-4 h-4 lt-text-gray-500" />}
-          value={publication?.commentOn?.id}
+          icon={<CollectionIcon className="lt-text-gray-500 h-4 w-4" />}
+          value={publication?.collectModule?.type}
           title="Collect module"
         >
           {publication?.collectModule?.type}
         </MetaDetails>
         <MetaDetails
-          icon={<GlobeAltIcon className="w-4 h-4 lt-text-gray-500" />}
+          icon={<GlobeAltIcon className="lt-text-gray-500 h-4 w-4" />}
           value={publication?.id}
           title="Posted via"
         >
           {publication?.appId}
         </MetaDetails>
         <MetaDetails
-          icon={<LinkIcon className="w-4 h-4 lt-text-gray-500" />}
+          icon={<LinkIcon className="lt-text-gray-500 h-4 w-4" />}
           value={getIPFSLink(publication?.onChainContentURI)}
           title="On-chain content URI"
         >

@@ -1,12 +1,11 @@
 import Attachments from '@components/Shared/Attachments';
 import IFramely from '@components/Shared/IFramely';
 import Markup from '@components/Shared/Markup';
-import useStaffMode from '@components/utils/hooks/useStaffMode';
-import type { LensterPublication } from '@generated/types';
 import { EyeIcon } from '@heroicons/react/outline';
 import getURLs from '@lib/getURLs';
 import { Trans } from '@lingui/macro';
 import clsx from 'clsx';
+import type { Publication } from 'lens';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { FC } from 'react';
@@ -14,15 +13,14 @@ import type { FC } from 'react';
 import DecryptedPublicationBody from './DecryptedPublicationBody';
 
 interface Props {
-  publication: LensterPublication;
+  publication: Publication;
 }
 
 const PublicationBody: FC<Props> = ({ publication }) => {
   const { pathname } = useRouter();
-  const { allowed: staffMode } = useStaffMode();
   const showMore = publication?.metadata?.content?.length > 450 && pathname !== '/posts/[id]';
 
-  if (staffMode && publication?.metadata?.encryptionParams) {
+  if (publication?.metadata?.encryptionParams) {
     return <DecryptedPublicationBody encryptedPublication={publication} />;
   }
 
@@ -31,13 +29,13 @@ const PublicationBody: FC<Props> = ({ publication }) => {
       <Markup
         className={clsx(
           { 'line-clamp-5': showMore },
-          'whitespace-pre-wrap break-words leading-md linkify text-md'
+          'leading-md linkify text-md whitespace-pre-wrap break-words'
         )}
       >
         {publication?.metadata?.content}
       </Markup>
       {showMore && (
-        <div className="mt-4 text-sm lt-text-gray-500 font-bold flex items-center space-x-1">
+        <div className="lt-text-gray-500 mt-4 flex items-center space-x-1 text-sm font-bold">
           <EyeIcon className="h-4 w-4" />
           <Link href={`/posts/${publication?.id}`}>
             <Trans>Show more</Trans>

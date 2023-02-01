@@ -5,12 +5,15 @@ import { Button } from '@components/UI/Button';
 import { Card } from '@components/UI/Card';
 import { ErrorMessage } from '@components/UI/ErrorMessage';
 import { Spinner } from '@components/UI/Spinner';
-import type { LensterAttachment, LensterPublication } from '@generated/types';
+import type { LensterAttachment } from '@generated/types';
 import type { IGif } from '@giphy/js-types';
 import { ChatAlt2Icon, PencilAltIcon } from '@heroicons/react/outline';
 import type { CollectCondition, EncryptedMetadata, FollowCondition } from '@lens-protocol/sdk-gated';
 import { LensGatedSDK } from '@lens-protocol/sdk-gated';
-import type { AccessConditionOutput } from '@lens-protocol/sdk-gated/dist/graphql/types';
+import type {
+  AccessConditionOutput,
+  CreatePublicPostRequest
+} from '@lens-protocol/sdk-gated/dist/graphql/types';
 import { $convertFromMarkdownString } from '@lexical/markdown';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { Analytics } from '@lib/analytics';
@@ -33,7 +36,12 @@ import {
   LIT_PROTOCOL_ENVIRONMENT,
   SIGN_WALLET
 } from 'data/constants';
-import type { CreatePublicCommentRequest, MetadataAttributeInput, PublicationMetadataV2Input } from 'lens';
+import type {
+  CreatePublicCommentRequest,
+  MetadataAttributeInput,
+  Publication,
+  PublicationMetadataV2Input
+} from 'lens';
 import {
   CollectModules,
   PublicationMainFocus,
@@ -63,23 +71,23 @@ import { useContractWrite, useProvider, useSigner, useSignTypedData } from 'wagm
 import Editor from './Editor';
 
 const Attachment = dynamic(() => import('@components/Composer/Actions/Attachment'), {
-  loading: () => <div className="mb-1 w-5 h-5 rounded-lg shimmer" />
+  loading: () => <div className="shimmer mb-1 h-5 w-5 rounded-lg" />
 });
 const Giphy = dynamic(() => import('@components/Composer/Actions/Giphy'), {
-  loading: () => <div className="mb-1 w-5 h-5 rounded-lg shimmer" />
+  loading: () => <div className="shimmer mb-1 h-5 w-5 rounded-lg" />
 });
 const CollectSettings = dynamic(() => import('@components/Composer/Actions/CollectSettings'), {
-  loading: () => <div className="mb-1 w-5 h-5 rounded-lg shimmer" />
+  loading: () => <div className="shimmer mb-1 h-5 w-5 rounded-lg" />
 });
 const ReferenceSettings = dynamic(() => import('@components/Composer/Actions/ReferenceSettings'), {
-  loading: () => <div className="mb-1 w-5 h-5 rounded-lg shimmer" />
+  loading: () => <div className="shimmer mb-1 h-5 w-5 rounded-lg" />
 });
 const AccessSettings = dynamic(() => import('@components/Composer/Actions/AccessSettings'), {
-  loading: () => <div className="mb-1 w-5 h-5 rounded-lg shimmer" />
+  loading: () => <div className="shimmer mb-1 h-5 w-5 rounded-lg" />
 });
 
 interface Props {
-  publication: LensterPublication;
+  publication: Publication;
 }
 
 const NewPublication: FC<Props> = ({ publication }) => {
@@ -141,11 +149,13 @@ const NewPublication: FC<Props> = ({ publication }) => {
     }
 
     // Track in simple analytics
-    if (restricted) {
-      Analytics.track(isComment ? COMMENT.TOKEN_GATED : POST.TOKEN_GATED);
-    } else {
-      Analytics.track(isComment ? COMMENT.NEW : POST.NEW);
-    }
+    const eventProperties = {
+      publication_type: restricted ? 'token_gated' : 'public',
+      publication_collect_module: selectedCollectModule,
+      publication_reference_module: selectedReferenceModule,
+      publication_has_attachments: attachments.length > 0
+    };
+    Analytics.track(isComment ? COMMENT.NEW : POST.NEW, eventProperties);
   };
 
   useEffect(() => {
@@ -435,7 +445,6 @@ const NewPublication: FC<Props> = ({ publication }) => {
       const metadata: PublicationMetadataV2Input = {
         version: '2.0.0',
         metadata_id: uuid(),
-        description: publicationContent,
         content: publicationContent,
         external_url: `https://lenster.xyz/u/${currentProfile?.handle}`,
         image: attachmentsInput.length > 0 ? getAttachmentImage() : textNftImageUrl,
@@ -460,7 +469,7 @@ const NewPublication: FC<Props> = ({ publication }) => {
         arweaveId = await createMetadata(metadata);
       }
 
-      const request = {
+      const request: CreatePublicPostRequest | CreatePublicCommentRequest = {
         profileId: currentProfile?.id,
         contentURI: `https://arweave.net/${arweaveId}`,
         ...(isComment && {
@@ -514,13 +523,13 @@ const NewPublication: FC<Props> = ({ publication }) => {
   const isLoading = loading || typedDataLoading;
 
   return (
-    <Card className={clsx({ 'border-none rounded-none': !isComment }, 'pb-3')}>
+    <Card className={clsx({ 'rounded-none border-none': !isComment }, 'pb-3')}>
       {error && <ErrorMessage className="mb-3" title={t`Transaction failed!`} error={error} />}
       <Editor />
       {publicationContentError && (
-        <div className="px-5 pb-3 mt-1 text-sm font-bold text-red-500">{publicationContentError}</div>
+        <div className="mt-1 px-5 pb-3 text-sm font-bold text-red-500">{publicationContentError}</div>
       )}
-      <div className="block items-center sm:flex px-5">
+      <div className="block items-center px-5 sm:flex">
         <div className="flex items-center space-x-4">
           <Attachment />
           <Giphy setGifAttachment={(gif: IGif) => setGifAttachment(gif)} />
@@ -535,9 +544,9 @@ const NewPublication: FC<Props> = ({ publication }) => {
               isLoading ? (
                 <Spinner size="xs" />
               ) : isComment ? (
-                <ChatAlt2Icon className="w-4 h-4" />
+                <ChatAlt2Icon className="h-4 w-4" />
               ) : (
-                <PencilAltIcon className="w-4 h-4" />
+                <PencilAltIcon className="h-4 w-4" />
               )
             }
             onClick={createPublication}

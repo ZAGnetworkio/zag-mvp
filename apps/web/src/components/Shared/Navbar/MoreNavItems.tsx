@@ -1,12 +1,12 @@
 import { Menu } from '@headlessui/react';
-import { HandIcon, SupportIcon } from '@heroicons/react/outline';
 import { Trans } from '@lingui/macro';
 import clsx from 'clsx';
 import type { FC } from 'react';
 import { Fragment } from 'react';
 
 import MenuTransition from '../MenuTransition';
-import { NextLink } from './MenuItems';
+import Contact from './NavItems/Contact';
+import ReportBug from './NavItems/ReportBug';
 
 const MoreNavItems: FC = () => {
   return (
@@ -15,10 +15,10 @@ const MoreNavItems: FC = () => {
         <>
           <Menu.Button
             className={clsx(
-              'w-full text-left px-2 md:px-3 py-1 rounded-md font-bold cursor-pointer text-sm tracking-wide',
+              'w-full cursor-pointer rounded-md px-2 py-1 text-left text-sm font-bold tracking-wide md:px-3',
               {
-                'text-black dark:text-white bg-gray-200 dark:bg-gray-800': open,
-                'text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800':
+                'bg-gray-200 text-black dark:bg-gray-800 dark:text-white': open,
+                'text-gray-700 hover:bg-gray-200 hover:text-black dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white':
                   !open
               }
             )}
@@ -28,36 +28,25 @@ const MoreNavItems: FC = () => {
           <MenuTransition>
             <Menu.Items
               static
-              className="absolute py-1 mt-2 bg-white rounded-xl border shadow-sm dark:bg-gray-900 focus:outline-none dark:border-gray-700"
+              className="absolute mt-2 rounded-xl border bg-white py-1 shadow-sm focus:outline-none dark:border-gray-700 dark:bg-gray-900"
             >
               <Menu.Item
-                as={NextLink}
-                href="/contact"
+                as="div"
                 className={({ active }: { active: boolean }) =>
-                  clsx({ 'dropdown-active': active }, 'menu-item')
+                  clsx({ 'dropdown-active': active }, 'm-2 rounded-lg')
                 }
               >
-                <div className="flex items-center space-x-1.5">
-                  <SupportIcon className="w-4 h-4" />
-                  <div>
-                    <Trans>Contact</Trans>
-                  </div>
-                </div>
+                <Contact />
               </Menu.Item>
               <Menu.Item
                 as="a"
                 href="https://discord.gg/5mACuu4fXU"
                 target="_blank"
                 className={({ active }: { active: boolean }) =>
-                  clsx({ 'dropdown-active': active }, 'menu-item')
+                  clsx({ 'dropdown-active': active }, 'm-2 rounded-lg')
                 }
               >
-                <div className="flex items-center space-x-1.5">
-                  <HandIcon className="w-4 h-4" />
-                  <div>
-                    <Trans>Report a bug</Trans>
-                  </div>
-                </div>
+                <ReportBug />
               </Menu.Item>
             </Menu.Items>
           </MenuTransition>

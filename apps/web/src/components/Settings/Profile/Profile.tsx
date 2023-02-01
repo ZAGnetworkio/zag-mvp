@@ -1,5 +1,4 @@
 import ChooseFile from '@components/Shared/ChooseFile';
-import IndexStatus from '@components/Shared/IndexStatus';
 import { Button } from '@components/UI/Button';
 import { Card } from '@components/UI/Card';
 import { ErrorMessage } from '@components/UI/ErrorMessage';
@@ -68,7 +67,6 @@ const ProfileSettingsForm: FC<Props> = ({ profile }) => {
   const { isLoading: signLoading, signTypedDataAsync } = useSignTypedData({ onError });
 
   const {
-    data: writeData,
     isLoading: writeLoading,
     error,
     write
@@ -81,7 +79,7 @@ const ProfileSettingsForm: FC<Props> = ({ profile }) => {
     onError
   });
 
-  const [broadcast, { data: broadcastData, loading: broadcastLoading }] = useBroadcastMutation({
+  const [broadcast, { loading: broadcastLoading }] = useBroadcastMutation({
     onCompleted
   });
   const [createSetProfileMetadataTypedData, { loading: typedDataLoading }] =
@@ -106,7 +104,7 @@ const ProfileSettingsForm: FC<Props> = ({ profile }) => {
       onError
     });
 
-  const [createSetProfileMetadataViaDispatcher, { data: dispatcherData, loading: dispatcherLoading }] =
+  const [createSetProfileMetadataViaDispatcher, { loading: dispatcherLoading }] =
     useCreateSetProfileMetadataViaDispatcherMutation({ onCompleted, onError });
 
   const createViaDispatcher = async (request: CreatePublicSetProfileMetadataUriRequest) => {
@@ -146,7 +144,7 @@ const ProfileSettingsForm: FC<Props> = ({ profile }) => {
       name: profile?.name ?? '',
       location: getAttribute(profile?.attributes, 'location'),
       website: getAttribute(profile?.attributes, 'website'),
-      twitter: getAttribute(profile?.attributes, 'twitter')?.replace('https://twitter.com/', ''),
+      twitter: getAttribute(profile?.attributes, 'twitter')?.replace(/(https:\/\/)?twitter\.com\//, ''),
       bio: profile?.bio ?? ''
     }
   });
@@ -182,30 +180,20 @@ const ProfileSettingsForm: FC<Props> = ({ profile }) => {
                   'app'
                 ].includes(attr.key)
             )
-            .map(({ traitType, key, value }) => ({ traitType, key, value })) ?? []),
-          { traitType: 'string', key: 'location', value: location },
-          { traitType: 'string', key: 'website', value: website },
-          { traitType: 'string', key: 'twitter', value: twitter },
-          { traitType: 'boolean', key: 'hasPrideLogo', value: pride },
-          {
-            traitType: 'string',
-            key: 'statusEmoji',
-            value: getAttribute(profile?.attributes, 'statusEmoji')
-          },
-          {
-            traitType: 'string',
-            key: 'statusMessage',
-            value: getAttribute(profile?.attributes, 'statusMessage')
-          },
-          { traitType: 'string', key: 'app', value: APP_NAME }
+            .map(({ key, value }) => ({ key, value })) ?? []),
+          { key: 'location', value: location },
+          { key: 'website', value: website },
+          { key: 'twitter', value: twitter },
+          { key: 'hasPrideLogo', value: pride },
+          { key: 'statusEmoji', value: getAttribute(profile?.attributes, 'statusEmoji') },
+          { key: 'statusMessage', value: getAttribute(profile?.attributes, 'statusMessage') },
+          { key: 'app', value: APP_NAME }
         ],
         version: '1.0.0',
-        metadata_id: uuid(),
-        createdOn: new Date(),
-        appId: APP_NAME
+        metadata_id: uuid()
       }).finally(() => setIsUploading(false));
 
-      const request = {
+      const request: CreatePublicSetProfileMetadataUriRequest = {
         profileId: currentProfile?.id,
         metadata: `https://arweave.net/${id}`
       };
@@ -222,14 +210,6 @@ const ProfileSettingsForm: FC<Props> = ({ profile }) => {
 
   const isLoading =
     isUploading || typedDataLoading || dispatcherLoading || signLoading || writeLoading || broadcastLoading;
-
-  const broadcastTxHash =
-    broadcastData?.broadcast.__typename === 'RelayerResult' && broadcastData.broadcast.txHash;
-  const dispatcherTxHash =
-    dispatcherData?.createSetProfileMetadataViaDispatcher.__typename === 'RelayerResult' &&
-    dispatcherData?.createSetProfileMetadataViaDispatcher.txHash;
-
-  const txHash = writeData?.hash ?? broadcastTxHash ?? dispatcherTxHash;
 
   return (
     <Card className="p-5">
@@ -259,7 +239,10 @@ const ProfileSettingsForm: FC<Props> = ({ profile }) => {
             {cover && (
               <div>
                 <img
-                  className="object-cover w-full h-60 rounded-lg"
+                  className="h-60 w-full rounded-lg object-cover"
+                  onError={({ currentTarget }) => {
+                    currentTarget.src = getIPFSLink(cover);
+                  }}
                   src={imageProxy(getIPFSLink(cover), COVER)}
                   alt={cover}
                 />
@@ -271,31 +254,28 @@ const ProfileSettingsForm: FC<Props> = ({ profile }) => {
             </div>
           </div>
         </div>
-        <div className="pt-4 space-y-2">
-          <div className="flex items-center space-x-2 label">
-            <img className="w-5 h-5" src="/pride.svg" alt="Pride Logo" />
+        <div className="space-y-2 pt-4">
+          <div className="label flex items-center space-x-2">
+            <img className="h-5 w-5" src="/pride.svg" alt="Pride Logo" />
             <span>
               <Trans>Celebrate pride every day</Trans>
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <Toggle on={pride} setOn={setPride} />
-            <div>
+            <div className="lt-text-gray-500">
               <Trans>Turn this on to show your pride and turn the {APP_NAME} logo rainbow every day.</Trans>
             </div>
           </div>
         </div>
-        <div className="flex flex-col space-y-2">
-          <Button
-            className="ml-auto"
-            type="submit"
-            disabled={isLoading}
-            icon={isLoading ? <Spinner size="xs" /> : <PencilIcon className="w-4 h-4" />}
-          >
-            <Trans>Save</Trans>
-          </Button>
-          {txHash ? <IndexStatus txHash={txHash} /> : null}
-        </div>
+        <Button
+          className="ml-auto"
+          type="submit"
+          disabled={isLoading}
+          icon={isLoading ? <Spinner size="xs" /> : <PencilIcon className="h-4 w-4" />}
+        >
+          <Trans>Save</Trans>
+        </Button>
       </Form>
     </Card>
   );

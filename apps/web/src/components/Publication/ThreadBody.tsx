@@ -1,5 +1,5 @@
-import type { LensterPublication } from '@generated/types';
 import { Analytics } from '@lib/analytics';
+import type { Publication } from 'lens';
 import { useRouter } from 'next/router';
 import type { FC } from 'react';
 import { PUBLICATION } from 'src/tracking';
@@ -10,7 +10,7 @@ import PublicationBody from './PublicationBody';
 import PublicationHeader from './PublicationHeader';
 
 interface Props {
-  publication: LensterPublication;
+  publication: Publication;
 }
 
 const ThreadBody: FC<Props> = ({ publication }) => {
@@ -28,8 +28,8 @@ const ThreadBody: FC<Props> = ({ publication }) => {
     >
       <PublicationHeader publication={publication} />
       <div className="flex">
-        <div className="mr-8 ml-5 bg-gray-300 border-gray-300 dark:bg-gray-700 dark:border-gray-700 border-[0.8px] -my-[3px]" />
-        <div className="pt-4 pb-5 !w-[85%] sm:w-full">
+        <div className="-my-[3px] mr-8 ml-5 border-[0.8px] border-gray-300 bg-gray-300 dark:border-gray-700 dark:bg-gray-700" />
+        <div className="!w-[85%] pt-4 pb-5 sm:w-full">
           {publication?.hidden ? (
             <HiddenPublication type={publication.__typename} />
           ) : (

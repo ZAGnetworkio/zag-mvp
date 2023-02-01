@@ -1,4 +1,4 @@
-import { MEDIA_PROXY_URL } from 'data/constants';
+import { IMAGE_PROXY_URL } from 'data/constants';
 
 /**
  *
@@ -7,9 +7,7 @@ import { MEDIA_PROXY_URL } from 'data/constants';
  * @returns imgproxy URL
  */
 const imageProxy = (url: string, name?: string): string => {
-  return name
-    ? `${MEDIA_PROXY_URL}/tr:n-${name},tr:di-placeholder.webp/${url}`
-    : `${MEDIA_PROXY_URL}/tr:di-placeholder.webp/${url}`;
+  return name ? `${IMAGE_PROXY_URL}/?name=${name}&image=${url}` : `${IMAGE_PROXY_URL}/?image=${url}`;
 };
 
 export default imageProxy;

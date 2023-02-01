@@ -1,6 +1,6 @@
 {
   "name": "lenster",
-  "version": "1.0.5-beta",
+  "version": "1.0.6-beta",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -11,17 +11,17 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
     "codegen": "turbo run codegen",
     "i18n:extract": "turbo run extract",
+    "workers:deploy": "turbo run worker:deploy",
     "prettier": "prettier --check \"**/*.{ts,tsx,md}\"",
     "prettier:fix": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky install"
   },
   "devDependencies": {
     "husky": "^8.0.3",
-    "prettier": "latest",
-    "turbo": "latest"
+    "prettier": "2.8.3",
+    "turbo": "1.7.0"
   },
   "engines": {
     "node": ">=14.0.0"
