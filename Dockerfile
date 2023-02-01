@@ -1,4 +1,4 @@
-FROM node:gallium
+FROM node:hydrogen
 
 WORKDIR /home/node/app
 
