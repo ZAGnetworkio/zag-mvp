@@ -48,3 +48,12 @@ yarn-error.log*
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+# cloudflare workers
+.dev.vars
+
+# playwright
+.gitsigners
+
+test-results/
+playwright-report/
+playwright/.cache/

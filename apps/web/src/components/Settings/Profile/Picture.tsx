@@ -3,10 +3,9 @@ import { Button } from '@components/UI/Button';
 import { ErrorMessage } from '@components/UI/ErrorMessage';
 import { Spinner } from '@components/UI/Spinner';
 import { PencilIcon } from '@heroicons/react/outline';
-import { Analytics } from '@lib/analytics';
-import getIPFSLink from '@lib/getIPFSLink';
 import getSignature from '@lib/getSignature';
 import imageProxy from '@lib/imageProxy';
+import { Leafwatch } from '@lib/leafwatch';
 import onError from '@lib/onError';
 import splitSignature from '@lib/splitSignature';
 import uploadToIPFS from '@lib/uploadToIPFS';
@@ -24,6 +23,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useAppStore } from 'src/store/app';
 import { SETTINGS } from 'src/tracking';
+import getIPFSLink from 'utils/getIPFSLink';
 import { useContractWrite, useSignTypedData } from 'wagmi';
 
 interface Props {
@@ -40,7 +40,7 @@ const Picture: FC<Props> = ({ profile }) => {
 
   const onCompleted = () => {
     toast.success(t`Avatar updated successfully!`);
-    Analytics.track(SETTINGS.PROFILE.SET_PICTURE);
+    Leafwatch.track(SETTINGS.PROFILE.SET_PICTURE);
   };
 
   const {

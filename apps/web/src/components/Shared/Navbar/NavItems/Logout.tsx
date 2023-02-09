@@ -1,6 +1,6 @@
 import { useDisconnectXmtp } from '@components/utils/hooks/useXmtpClient';
 import { LogoutIcon } from '@heroicons/react/outline';
-import { Analytics } from '@lib/analytics';
+import { Leafwatch } from '@lib/leafwatch';
 import resetAuthData from '@lib/resetAuthData';
 import { Trans } from '@lingui/macro';
 import clsx from 'clsx';
@@ -10,10 +10,10 @@ import { useAppPersistStore, useAppStore } from 'src/store/app';
 import { PROFILE } from 'src/tracking';
 import { useDisconnect } from 'wagmi';
 
-type Props = {
+interface Props {
   onClick?: () => void;
   className?: string;
-};
+}
 
 const Logout: FC<Props> = ({ onClick, className = '' }) => {
   const { disconnect } = useDisconnect();
@@ -23,7 +23,7 @@ const Logout: FC<Props> = ({ onClick, className = '' }) => {
   const setProfileId = useAppPersistStore((state) => state.setProfileId);
 
   const logout = () => {
-    Analytics.track(PROFILE.LOGOUT);
+    Leafwatch.track(PROFILE.LOGOUT);
     disconnectXmtp();
     setCurrentProfile(null);
     setProfileId(null);

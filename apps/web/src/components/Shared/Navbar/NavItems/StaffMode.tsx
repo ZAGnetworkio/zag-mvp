@@ -1,6 +1,6 @@
 import useStaffMode from '@components/utils/hooks/useStaffMode';
 import { ShieldCheckIcon, ShieldExclamationIcon } from '@heroicons/react/outline';
-import { Analytics } from '@lib/analytics';
+import { Leafwatch } from '@lib/leafwatch';
 import { Trans } from '@lingui/macro';
 import clsx from 'clsx';
 import type { FC } from 'react';
@@ -8,9 +8,9 @@ import React from 'react';
 import { useAppPersistStore } from 'src/store/app';
 import { STAFFTOOLS } from 'src/tracking';
 
-type Props = {
+interface Props {
   className?: string;
-};
+}
 
 const StaffMode: FC<Props> = ({ className = '' }) => {
   const { allowed: staffMode } = useStaffMode();
@@ -18,7 +18,7 @@ const StaffMode: FC<Props> = ({ className = '' }) => {
 
   const toggleStaffMode = () => {
     setStaffMode(!staffMode);
-    Analytics.track(STAFFTOOLS.TOGGLE_MODE);
+    Leafwatch.track(STAFFTOOLS.TOGGLE_MODE);
   };
 
   return (
