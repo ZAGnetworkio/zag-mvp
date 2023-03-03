@@ -1,6 +1,7 @@
 import { Button } from '@components/UI/Button';
 import { ExclamationCircleIcon, ExternalLinkIcon, ShieldCheckIcon } from '@heroicons/react/outline';
-import { Leafwatch } from '@lib/leafwatch';
+import { Mixpanel } from '@lib/mixpanel';
+import { stopEventPropagation } from '@lib/stopEventPropagation';
 import { Trans } from '@lingui/macro';
 import type { Publication } from 'lens';
 import type { FC } from 'react';
@@ -15,11 +16,11 @@ const ModAction: FC<Props> = ({ publication }) => {
   const setShowReportModal = useGlobalModalStateStore((state) => state.setShowReportModal);
 
   return (
-    <span className="mt-3 flex items-center gap-3 text-sm" onClick={(event) => event.stopPropagation()}>
+    <span className="mt-3 flex items-center gap-3 text-sm" onClick={stopEventPropagation}>
       <Button
         onClick={() => {
           setShowReportModal(true, publication, { type: 'spamReason', subReason: 'FAKE_ENGAGEMENT' });
-          Leafwatch.track(MOD.SPAM);
+          Mixpanel.track(MOD.SPAM);
         }}
         variant="warning"
         icon={<ExclamationCircleIcon className="h-4 w-4" />}
@@ -30,7 +31,7 @@ const ModAction: FC<Props> = ({ publication }) => {
       <Button
         onClick={() => {
           setShowReportModal(true, publication);
-          Leafwatch.track(MOD.OTHER);
+          Mixpanel.track(MOD.OTHER);
         }}
         icon={<ShieldCheckIcon className="h-4 w-4" />}
       >

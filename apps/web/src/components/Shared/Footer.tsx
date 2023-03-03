@@ -3,7 +3,7 @@ import { Menu } from '@headlessui/react';
 import { GlobeAltIcon } from '@heroicons/react/outline';
 import { setLocale, supportedLocales } from '@lib/i18n';
 import isFeatureEnabled from '@lib/isFeatureEnabled';
-import { Leafwatch } from '@lib/leafwatch';
+// import { Leafwatch } from '@lib/leafwatch';
 import { Trans } from '@lingui/macro';
 import { useLingui } from '@lingui/react';
 // import clsx from 'clsx';
@@ -42,7 +42,7 @@ const Footer: FC = () => {
           href="https://discord.gg/5mACuu4fXU"
           target="_blank"
           rel="noreferrer noopener"
-          onClick={() => Leafwatch.track(FOOTER.DISCORD)}
+          // onClick={() => Leafwatch.track(FOOTER.DISCORD)}
         >
           <Trans>Discord</Trans>
         </a>
