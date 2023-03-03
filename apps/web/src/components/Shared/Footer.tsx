@@ -1,7 +1,7 @@
 import useStaffMode from '@components/utils/hooks/useStaffMode';
-import { Menu } from '@headlessui/react';
-import { GlobeAltIcon } from '@heroicons/react/outline';
-import { setLocale, supportedLocales } from '@lib/i18n';
+// import { Menu } from '@headlessui/react';
+// import { GlobeAltIcon } from '@heroicons/react/outline';
+import { supportedLocales } from '@lib/i18n';
 import isFeatureEnabled from '@lib/isFeatureEnabled';
 // import { Leafwatch } from '@lib/leafwatch';
 import { Trans } from '@lingui/macro';
@@ -11,7 +11,7 @@ import { APP_NAME } from 'data/constants';
 // import Link from 'next/link';
 import type { FC } from 'react';
 import { useAppStore } from 'src/store/app';
-import { FOOTER } from 'src/tracking';
+// import { FOOTER } from 'src/tracking';
 
 // import MenuTransition from './MenuTransition';
 
